@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            padding: 0;
+            margin: 0;
+        }
+        
+        .main {
+            width: 1000px;
+            margin: 100px auto;
+        }
+        
+        a {
+            text-decoration: none;
+            color: #666;
+        }
+        
+        ul {
+            margin-top: 20px;
+            list-style: none;
+            display: flex;
+            justify-content: flex-start;
+            margin-left: 50px;
+            /* overflow: hidden; */
+        }
+        
+        li:nth-child(5) {
+            border: none;
+        }
+        
+        .logo img {
+            width: 60%;
+            height: 60%;
+            margin-left: 160px;
+        }
+        
+        .search {
+            display: flex;
+            box-sizing: border-box;
+            padding: 0 100px;
+            /* border: 2px solid #2a69af; */
+        }
+        
+        .hotkey {
+            margin-top: 10px;
+            text-indent: 7em;
+        }
+        
+        .search input {
+            flex: 80%;
+            height: 40px;
+            outline-style: none;
+            border: 2px solid #2a69af;
+            font-size: larger;
+            color: #666;
+            text-indent: 0.5em;
+        }
+        
+        .inputSub {
+            flex: 20%;
+            background-color: #2a69af;
+            font-size: larger;
+            outline-style: none;
+            border: none;
+            color: #fff;
+            cursor: pointer;
+        }
+        
+        .weather-info {
+            text-align: center;
+            border-right: 1px solid #ccc;
+            padding-right: 10px;
+            margin-right: 10px;
+        }
+        
+        .type {
+            font-size: 30px;
+            color: #e7b589;
+            margin-bottom: 10px;
+            width: 150px;
+        }
+        
+        .temp {
+            color: #e7b589;
+            margin-bottom: 10px;
+        }
+        
+        .info-date {
+            color: #666;
+        }
+        
+        h2 {
+            margin-top: 50px;
+            text-align: center;
+            color: limegreen;
+        }
+        
+        #app {
+            position: fixed;
+            top: 20px;
+            right: 10px;
+            text-align: center;
+        }
+        
+        p {
+            width: 300px;
+            height: 300px;
+            overflow: auto;
+            background-color: gainsboro;
+            border: 2px dotted #2a69af;
+            font-size: larger;
+        }
+        
+        #app button {
+            width: 80px;
+            height: 50px;
+            background-color: limegreen;
+            color: #fff;
+            font-size: large;
+            font-weight: 600;
+            border: none;
+            border-radius: 7px;
+            outline-style: none;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="main">
+        <div class="logo">
+            <img src="weatherLogo.png" alt="">
+        </div>
+        <div class="search">
+            <input type="text" name="" id="searchInput" placeholder="请输入您要查询天气的城市" @keyup.enter="searchWeather" v-model="city">
+            <button class="inputSub" @click="searchWeather">搜 索</button>
+        </div>
+        <div class="hotkey">
+            <a href="javascript:;" @click="changCity('北京')">北京</a>
+            <a href="javascript:;" @click="changCity('上海')">上海</a>
+            <a href="javascript:;" @click="changCity('广州')">广州</a>
+            <a href="javascript:;" @click="changCity('深圳')">深圳</a>
+        </div>
+        <ul class="weather-list">
+            <li class="weather-info" v-for="(item, index) in weatherList" :key="index">
+                <div class="type">{{item.type}}</div>
+                <div class="temp">
+                    <b class="low">{{item.low}}</b> ～
+                    <b class="high">{{item.high}}</b>
+                </div>
+                <div class="info-date">
+                    {{item.date}}
+                </div>
+            </li>
+
+        </ul>
+        <h2 class="tips" v-if="flag">{{a}}现在是{{ganmao}}</h2>
+    </div>
+    <div id="app">
+        <h1>这是一个笑话</h1>
+
+        <p>{{joke}}</p>
+        <button @click="getJoke">{{btn_info}}</button>
+    </div>
+    <script src="https://cdn.bootcdn.net/ajax/libs/axios/0.20.0/axios.min.js "></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js "></script>
+    <script>
+        let main = new Vue({
+            el: ".main ",
+            data: {
+                city: '',
+                weatherList: [],
+                ganmao: '',
+                flag: false,
+                a: ''
+            },
+            methods: {
+                searchWeather: function() {
+                    console.log("题拿起查 ");
+                    console.log(this.city);
+                    let that = this
+                    axios.get(`http://wthrcdn.etouch.cn/weather_mini?city=${this.city}`)
+                        .then(function(response) {
+                            that.flag = true
+                            console.log(that.city);
+                            console.log(response);
+                            that.weatherList = response.data.data.forecast
+                            console.log(that.weatherList);
+                            that.ganmao = response.data.data.ganmao
+                            that.a = that.city
+                        }).catch(function(err) {
+                            console.log("请求出错了！ ");
+                            alert("没有找到结果，请重新输入。")
+                        })
+                },
+                changCity: function(city) {
+                    this.city = city
+                    this.searchWeather()
+                }
+            },
+        })
+        let app = new Vue({
+            el: "#app",
+            data: {
+                joke: "点击下方按钮",
+                btn_info: "请点我"
+            },
+            methods: {
+                getJoke: function() {
+                    this.btn_info = "不好笑，下一个",
+                        console.log(this.joke);
+                    let that = this
+                        //axios请求后面的this和前面的this指向不同
+                    axios.get("http://hn216.api.yesapi.cn/?s=App.Common_Joke.RandOne&num=1&app_key=292E998F36BBD443CBE5109C6AE3EADC&sign=EE57E4458645F52F33242227F7325248").then(function(response) {
+                        console.log(response.data.data.joke[0]);
+                        that.joke = response.data.data.joke[0].toString()
+                    }, function(err) {
+                        console.log("请求出错了！");
+                    })
+                },
+            },
+        })
+    </script>
+
+</body>
+
+</html>
