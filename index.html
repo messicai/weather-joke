@@ -4,6 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="Content-Security-Policy" content="upgrade-insecure-requests">
     <title>天知道-中国城市天气查询大全</title>
     <style>
         * {
@@ -185,7 +186,7 @@
                     console.log("题拿起查 ");
                     console.log(this.city);
                     let that = this
-                    axios.get(`https://wthrcdn.etouch.cn/weather_mini?city=${this.city}`)
+                    axios.get(`http://wthrcdn.etouch.cn/weather_mini?city=${this.city}`)
                         .then(function(response) {
                             that.flag = true
                             console.log(that.city);
